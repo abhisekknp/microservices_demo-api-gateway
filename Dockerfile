@@ -1,27 +1,8 @@
 #-----------------------------------------------------------------------------------------------------
 # API Gateway
 #-----------------------------------------------------------------------------------------------------
-FROM openjdk:8u121-jdk-alpine
 
-MAINTAINER Abhisek Omar <Abhisek.Omar@Impetus.co.in>
-
-# Keep consistent with build.gradle 
-ENV APP_JAR_NAME basic-api-gateway
-ENV APP_JAR_VERSION 0.0.1
-
-# Install curl and bash for the entry script
-RUN apk --update add curl bash && \
-	rm -rf /var/cache/apk/*
-	
-RUN mkdir /app
-
-ADD ${APP_JAR_NAME}-${APP_JAR_VERSION}.jar /app/
-ADD run.sh /app/
-RUN chmod +x /app/run.sh 
-
-WORKDIR /app
-
-EXPOSE 8765
-
-ENTRYPOINT ["/bin/bash","-c"]
-CMD ["/app/run.sh"]
+FROM openjdk:8-jdk-alpine
+ARG JAR_FILE=JAR_FILE_MUST_BE_SPECIFIED_AS_BUILD_ARG
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java", "-Djava.security.edg=file:/dev/./urandom","-jar","/app.jar"]
